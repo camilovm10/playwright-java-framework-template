@@ -27,6 +27,7 @@ import static common.utils.TimeOuts.TWO_MINUTE;
  * modifications by using {@link CopyOnWriteArrayList}.  Tracing and sensible defaults are applied eagerly.
  */
 @Slf4j
+@Getter
 public class BrowserContextHolder {
 
     private final List<Context> contexts = new CopyOnWriteArrayList<>();

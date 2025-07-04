@@ -12,10 +12,15 @@ import common.browser.OverridableBrowserConfiguration;
 import common.exceptions.NavigationException;
 import common.headedmode.PlaywrightHeadedDockerModule;
 import common.shared.BrowserContextHolder;
+import common.utils.ReportUtils;
+import io.qameta.allure.Step;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 @Slf4j
 public class BaseTest {
@@ -30,11 +35,23 @@ public class BaseTest {
 
     @BeforeMethod(alwaysRun = true)
     public void launchApplication() {
+        ReportUtils.removeOldTraceResults();
         injector.set(Guice.createInjector(getPlaywrightModule()));
     }
 
     @AfterMethod(alwaysRun = true)
+    public void tearDownScreenshots(ITestResult result) {
+        log.debug("Take screenshots of the context only if the test fails");
+        Try.run(() -> {
+            if (Boolean.FALSE.equals(result.isSuccess())) {
+                uploadScreenshots();
+            }
+        }).onFailure(e -> log.error("Unable to take screenshots of the context", e));
+    }
+
+    @AfterMethod(alwaysRun = true, dependsOnMethods = "tearDownScreenshots")
     public void tearDownTrace() {
+        uploadTracingZip();
         closeFrameworkProviders();
     }
 
@@ -46,6 +63,20 @@ public class BaseTest {
     protected AbstractModule getPlaywrightModule() {
         log.trace("Taking headed mode for the given test");
         return new PlaywrightHeadedDockerModule(headConfiguration);
+    }
+
+    protected void uploadScreenshots() {
+        BrowserContextHolder contextHolder = injector.get()
+                .getInstance(BrowserContextHolder.class);
+        contextHolder
+                .getContexts()
+                .forEach(context -> attachEvidenceOfContext(context.getName(), context.getContext().pages()));
+    }
+
+    @Step("Captures of context : {contextName}")
+    private void attachEvidenceOfContext(String contextName, List<Page> pages) {
+        log.debug("Take screenshots of the context {}", contextName);
+        pages.forEach(ReportUtils::uploadEvidenceOfPage);
     }
 
     public Page createNewTab() {
@@ -96,6 +127,12 @@ public class BaseTest {
         } catch (TimeoutError error) {
             throw new NavigationException(UNABLE_TO_NAVIGATE_TO_THE_PAGE_MESSAGE + url, error);
         }
+    }
+
+    protected void uploadTracingZip() {
+        log.trace("Uploading tracing zip");
+        injector.get().getInstance(BrowserContextHolder.class).stopTracing();
+        ReportUtils.uploadTracingZip();
     }
 
     protected void closeFrameworkProviders() {

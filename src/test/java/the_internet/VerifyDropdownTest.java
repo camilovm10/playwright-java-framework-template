@@ -18,4 +18,11 @@ public class VerifyDropdownTest extends BaseTest {
         Assert.assertEquals(successMessage, "You logged into a secure area!\n" +
                 "            ×");
     }
+
+    @Test
+    public void javascriptAlertsTest() {
+        HomePage homePage = webPageInstance(HomePage.class, "https://the-internet.herokuapp.com/");
+        var javascriptAlertsPage = homePage.clickOnJavascriptAlerts();
+        javascriptAlertsPage.handleJavascriptAlerts();
+    }
 }
