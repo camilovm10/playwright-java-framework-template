@@ -1,0 +1,36 @@
+package common.utils;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public enum TimeOuts {
+
+    LESS_THAN_HALF_SECOND(350),
+    HALF_SECOND(500),
+    ONE_SECOND(1000),
+    TWO_SECONDS(2000),
+    THREE_SECONDS(3000),
+    FIVE_SECONDS(5000),
+    SEVEN_SECONDS(7000),
+    TEN_SECONDS(10000),
+    FIFTEEN_SECONDS(15_000),
+    TWENTY_SECONDS(20000),
+    HALF_MINUTE(30000),
+    FORTY_SECONDS(40000),
+    ONE_MINUTE(60000),
+    ONE_MINUTE_AND_HALF(90000),
+    TWO_MINUTE(60000 * 2),
+    THREE_MINUTE(60000 * 3),
+    FIVE_MINUTES(60000 * 5),
+    SEVEN_MINUTES(60000 * 7),
+    EIGHT_MINUTES(60000 * 8),
+    NINE_MINUTES(60000 * 9),
+    TEN_MINUTE(60000 * 10),
+    FIFTEEN_MINUTE(60_000 * 15),
+    SEVENTEEN_MINUTES(60_000 * 17),
+    TWENTY_MINUTE(60_000 * 20);
+
+    private final long value;
+}

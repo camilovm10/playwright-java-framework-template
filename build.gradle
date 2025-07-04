@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+group 'playwright-java'
+version '1.0'
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useTestNG() {
+        parallel = "methods"
+        threadCount = 1
+    }
+}
+
+dependencies {
+
+    implementation 'org.testng:testng:7.7.0'
+    implementation 'com.microsoft.playwright:playwright:1.47.0'
+    implementation 'org.awaitility:awaitility:4.2.0'
+    implementation 'org.assertj:assertj-core:3.22.0'
+    implementation 'javax.ws.rs:javax.ws.rs-api:2.1.1'
+    implementation 'com.google.inject:guice:7.0.0'
+    implementation group: 'io.vavr', name: 'vavr', version: '1.0.0-alpha-4'
+
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
